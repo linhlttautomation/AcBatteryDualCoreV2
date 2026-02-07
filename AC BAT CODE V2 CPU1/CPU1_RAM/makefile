@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS
+CG_TOOL_ROOT := C:/Ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -26,7 +26,6 @@ ORDERED_OBJS += \
 "./f2838x_usdelay.obj" \
 "../2838x_RAM_SDFM_CLA_lnk_cpu1.cmd" \
 "../f2838x_headers_nonBIOS_cpu1.cmd" \
-"../library/Math/CLAmath/lib/2837x_c1bootROM_CLADataROMSymbols_fpu32.lib" \
 "../library/Math/CLAmath/lib/cla0_math_library_datarom_eabi.lib" \
 "../library/Math/CLAmath/lib/cla0_math_library_datarom_fpu32_eabi.lib" \
 "../library/Math/CLAmath/lib/cla0_math_library_eabi.lib" \
@@ -35,8 +34,8 @@ ORDERED_OBJS += \
 "../library/Math/CLAmath/lib/cla1_math_library_datarom_fpu32_eabi.lib" \
 "../library/Math/CLAmath/lib/cla1_math_library_eabi.lib" \
 "../library/Math/CLAmath/lib/cla1_math_library_fpu32_eabi.lib" \
+"../library/Math/IQmath/lib/IQmath_eabi.lib" \
 "../library/Math/IQmath/lib/IQmath_fpu32_eabi.lib" \
-"../library/Math/VCU/lib/c28x_vcu0_library_fpu32.lib" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
 
@@ -50,11 +49,9 @@ RMDIR := RMDIR /S/Q
 -include subdir_vars.mk
 -include library/Math/CLAmath/lib/subdir_vars.mk
 -include library/Math/IQmath/lib/subdir_vars.mk
--include library/Math/VCU/lib/subdir_vars.mk
 -include subdir_rules.mk
 -include library/Math/CLAmath/lib/subdir_rules.mk
 -include library/Math/IQmath/lib/subdir_rules.mk
--include library/Math/VCU/lib/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -151,10 +148,10 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-AC\ BAT\ CODE\ V2\ CPU1.out \
+AC\ BAT\ CODE\ V2\ CPU1.out 
 
 EXE_OUTPUTS__QUOTED += \
-"AC BAT CODE V2 CPU1.out" \
+"AC BAT CODE V2 CPU1.out" 
 
 
 # All Target
@@ -165,7 +162,7 @@ all: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 AC\ BAT\ CODE\ V2\ CPU1.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C2000 Linker'
-	"C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla2 --float_support=fpu64 --idiv_support=idiv0 --tmu_support=tmu0 --vcu_support=vcrc -Ooff --advice:performance=all --define=USE_20MHZ_XTAL --define=DEBUG --define=CPU1 --diag_suppress=10063 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"AC BAT CODE V2 CPU1.map" --stack_size=0x100 --warn_sections -i"C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/lib" -i"C:/ti/ccs1250/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --xml_link_info="AC BAT CODE V2 CPU1_linkInfo.xml" --entry_point=code_start --rom_model -o "AC BAT CODE V2 CPU1.out" $(ORDERED_OBJS)
+	"C:/Ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/bin/cl2000" -v28 -ml -mt --cla_support=cla2 --float_support=fpu64 --idiv_support=idiv0 --tmu_support=tmu0 --vcu_support=vcrc -Ooff --define=USE_20MHZ_XTAL --define=DEBUG --define=CPU1 --diag_suppress=10063 --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"AC BAT CODE V2 CPU1.map" --stack_size=0x100 --warn_sections -i"C:/Ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/lib" -i"C:/Ti/ccs1270/ccs/tools/compiler/ti-cgt-c2000_22.6.1.LTS/include" --reread_libs --diag_wrap=off --display_error_number --xml_link_info="AC BAT CODE V2 CPU1_linkInfo.xml" --entry_point=code_start --rom_model -o "AC BAT CODE V2 CPU1.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 

@@ -1,6 +1,8 @@
 eclipse.preferences.version=1
 encoding//CPU1_RAM/library/Math/CLAmath/lib/subdir_rules.mk=UTF-8
 encoding//CPU1_RAM/library/Math/CLAmath/lib/subdir_vars.mk=UTF-8
+encoding//CPU1_RAM/library/Math/CLAmath/source/subdir_rules.mk=UTF-8
+encoding//CPU1_RAM/library/Math/CLAmath/source/subdir_vars.mk=UTF-8
 encoding//CPU1_RAM/library/Math/IQmath/lib/subdir_rules.mk=UTF-8
 encoding//CPU1_RAM/library/Math/IQmath/lib/subdir_vars.mk=UTF-8
 encoding//CPU1_RAM/library/Math/VCU/lib/subdir_rules.mk=UTF-8

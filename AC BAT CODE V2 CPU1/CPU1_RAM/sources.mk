@@ -114,5 +114,4 @@ SUBDIRS := \
 . \
 library/Math/CLAmath/lib \
 library/Math/IQmath/lib \
-library/Math/VCU/lib \
 

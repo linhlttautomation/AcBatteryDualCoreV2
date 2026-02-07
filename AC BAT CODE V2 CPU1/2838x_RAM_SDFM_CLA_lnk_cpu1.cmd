@@ -84,9 +84,9 @@ SECTIONS
    .switch          : > RAMM0
    .reset           : > RESET, TYPE = DSECT /* not used, */
 
-   .stack           : > RAMM1 | RAMD0 | RAMD1 | RAMGS1 | RAMGS2 | RAMGS3 | RAMGS4 | RAMGS5
+   .stack           : > RAMM1
 #if defined(__TI_EABI__)
-   .bss             : > RAMD0 | RAMGS0
+   .bss             : > RAMD0
    .bss:output      : > RAMD0
    .init_array	    : > RAMM0
    .const           : > RAMGS3
@@ -107,7 +107,7 @@ SECTIONS
    MSGRAM_CPU_TO_CM   > CPUTOCMRAM, type=NOINIT
    MSGRAM_CM_TO_CPU   > CMTOCPURAM, type=NOINIT
    
-   DLOG : > RAMGS0 | RAMGS1 | RAMGS2
+   DLOG : > RAMGS2
    CLA1mathTables   : > RAMLS0
    IOBuffer         : > RAMLS0
 

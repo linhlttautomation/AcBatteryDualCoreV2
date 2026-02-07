@@ -89,10 +89,10 @@ volatile Uint16 sampwin = 30;
 volatile Uint16 thresh = 18;
 
 #pragma DATA_SECTION(LEM_curIlvHi, "RAMGS0");
-volatile Uint16 LEM_curIlvHi = LEM_2(10);
+volatile Uint16 LEM_curIlvHi = LEM_2(45);
 
 #pragma DATA_SECTION(LEM_curIlvLo, "RAMGS0");
-volatile Uint16 LEM_curIlvLo = LEML_2(-10);
+volatile Uint16 LEM_curIlvLo = LEML_2(-45);
 
 #pragma DATA_SECTION(LEM_curIhvHi, "RAMGS0");
 volatile Uint16 LEM_curIhvHi = LEM_2(10);
@@ -101,30 +101,22 @@ volatile Uint16 LEM_curIhvHi = LEM_2(10);
 volatile Uint16 LEM_curIhvLo = LEML_2(-10);
 
 #pragma DATA_SECTION(MEA_voltUbatHi, "RAMGS0");
-volatile Uint16 MEA_voltUbatHi = MEAUBAT(500);
+volatile Uint16 MEA_voltUbatHi = MEAUBAT(120);
 
 #pragma DATA_SECTION(MEA_voltUbatLo, "RAMGS0");
 volatile Uint16 MEA_voltUbatLo = 0;
 
 #pragma DATA_SECTION(MEA_voltUcHi, "RAMGS0");
-volatile Uint16 MEA_voltUcHi = MEAUC(520);
+volatile Uint16 MEA_voltUcHi = MEAUC(340);
 
 #pragma DATA_SECTION(MEA_voltUcLo, "RAMGS0");
 volatile Uint16 MEA_voltUcLo = 0;
 
 #pragma DATA_SECTION(MEA_voltUdcHi, "RAMGS0");
-volatile Uint16 MEA_voltUdcHi = MEAUDC(560);
+volatile Uint16 MEA_voltUdcHi = MEAUDC(480);
 
 #pragma DATA_SECTION(MEA_voltUdcLo, "RAMGS0");
 volatile Uint16 MEA_voltUdcLo = 0;
-
-typedef enum {
-    TPC_OFF,
-    TPC_ON
-} eTPCSts;
-
-#pragma DATA_SECTION(e_TPC_Sts, "RAMGS0");
-volatile eTPCSts e_TPC_Sts = TPC_OFF;
 
 //
 // Macro definitions
@@ -171,28 +163,6 @@ void DelayS(unsigned long s)
     }
 }
 
-void Action(void)
-{
-    static Uint16 initialized = 0;
-    static Uint16 prevState;
-    static Uint16 flcState = 0;
-
-    Uint16 currState = GpioDataRegs.GPADAT.bit.GPIO10;
-
-    if (!initialized)
-    {
-        prevState = currState;
-        initialized = 1;
-    }
-
-    if (prevState == 1 && currState == 0)
-    {
-        flcState = !flcState;
-        START = (flcState) ? 1 : 0;
-    }
-
-    prevState = currState;
-}
 
 //
 // Main
@@ -237,7 +207,7 @@ int main(void)
 #if(TPC_MODE_RUN == VFDAB_MODE)
 
    //PWM_VFDAB(1000,60); //50k
-   PWM_VFDAB(500,60); //100k
+   PWM_VFDAB(500,50); //100k
    //PWM_VFDAB(625,40); //80k
    //PWM_VFDAB(715,40); //70k
    //PWM_VFDAB(834,40); //60k
@@ -499,9 +469,7 @@ int main(void)
     //
     while(1)
     {
-//        Action();
-
-        if(e_TPC_Sts == TPC_ON)
+        if(START == 1)
         {
 #if(TPC_MODE_RUN == CFDAB_MODE)
             // LEVEL1

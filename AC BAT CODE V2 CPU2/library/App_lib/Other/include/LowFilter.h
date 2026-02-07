@@ -36,12 +36,12 @@ typedef LOWPASSFILTER *LOWPASSFILTER_hanlde;
 	v.Vout_k1 = v.Vout;
 
 #define LOWPASSFILTER_INT(v)			\
-  v.Heso_in = 0.0f;						\
-  v.Heso_out = 0.0f;						\
-  v.Vin = 0.0f;							\
-  v.Vout_k2 = 0.0f;						\
-  v.Vout_k1 = 0.0f;						\
-  v.Vout = 0.0f;
+  v.Heso_in = 0;						\
+  v.Heso_out = 0;						\
+  v.Vin = 0;							\
+  v.Vout_k2 = 0;						\
+  v.Vout_k1 = 0;						\
+  v.Vout = 0;
 
 
 #endif /* 2_LIBRUARY_INCLUDE_OTHER_LOWFILTER_H_ */

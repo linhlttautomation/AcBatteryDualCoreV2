@@ -37,8 +37,6 @@
 #include "SinPWM_IFB_CLA.h"
 #include "PWM_3T_IFB_CLA.h"
 #include "PR_new.h"
-#include "sin_cos_taylor.h"
-
 //
 // Defines
 //
@@ -251,6 +249,7 @@ volatile PR_Calculator_new PR_Calculator_voltage;
 #pragma DATA_SECTION(PR_Parameter_curr_H2,"CLADataLS0");
 volatile PR_Parameter_new PR_Parameter_voltage;
 
+
 #if(ALLOW_CALIB_PI == 1)
     #pragma DATA_SECTION(KP_CURR_LOOP_1,"CLADataLS0");
     volatile float KP_CURR_LOOP_1;
@@ -455,25 +454,15 @@ __interrupt void Cla1Task1 ( void )
             rg_har_1st.Freq = 50.0f/150.0f;
             RAMP_GEN_CLA_MACRO(rg_har_1st)
 
-//            rc_Ref.TargetValue = 220.0f/400.0f;
-            rc_Ref.TargetValue = 170.0f/400.0f;
+            rc_Ref.TargetValue = 220.0f/400.0f;
             //rc_Ref.TargetValue = CpuToCLA.VdTesting/400.0;
             RC_CLA_MACRO(rc_Ref)
 
             ipark_voltref.d    = can2*rc_Ref.SetpointValue;
             ipark_voltref.q    = 0.0f;
             ipark_voltref.z    = 0.0f;
-
-            #if(ALLOW_SINCOS_TABLE)
-                ipark_voltref.sine = sinPU_taylor(rg_har_1st.Out);
-                ipark_voltref.cos  = cosPU_taylor(rg_har_1st.Out);
-            #endif
-
-            #if(!ALLOW_SINCOS_TABLE)
-                ipark_voltref.sine = CLAsinPU(rg_har_1st.Out);
-                ipark_voltref.cos  = CLAcosPU(rg_har_1st.Out);
-            #endif
-
+            ipark_voltref.sine = CLAsinPU(rg_har_1st.Out);
+            ipark_voltref.cos  = CLAcosPU(rg_har_1st.Out);
             iPARK_CLA_V3_MACRO(ipark_voltref)
 
             #if(MODE_MODULATION == MODE_MODULATION_SVM2D)
@@ -512,7 +501,7 @@ __interrupt void Cla1Task1 ( void )
                 Svm3d_2.Ubeta  = ipark_voltref.beta;
                 Svm3d_2.Ugamma = ipark_voltref.gamma;
 
-                Svm3d_2.Udc = 600.0f/800.0f;
+                Svm3d_2.Udc = 650.0f/800.0f;
                 SVM3D_DQZ_GEN_CLA_RUN(&Svm3d_2);
 
                 pwm.MfuncA1 = Svm3d_2.da;
@@ -891,34 +880,7 @@ __interrupt void Cla1Task1 ( void )
     }
     else
     {
-        EPwm1Regs.DBCTL.bit.OUT_MODE = 0; // Tắt chức năng Dead Band đầu ra (Dead Band output mode).
-        EPwm3Regs.DBCTL.bit.OUT_MODE = 0; // Tắt chức năng Dead Band đầu ra (Dead Band output mode).
-        EPwm2Regs.DBCTL.bit.OUT_MODE = 0; // Tắt chức năng Dead Band đầu ra (Dead Band output mode).
-        EPwm4Regs.DBCTL.bit.OUT_MODE = 0; // Tắt chức năng Dead Band đầu ra (Dead Band output mode).
 
-        EPwm1Regs.AQCTLA.bit.CAU = AQ_CLEAR;
-        EPwm1Regs.AQCTLA.bit.CAD = AQ_SET;
-
-        EPwm3Regs.AQCTLA.bit.CAU = AQ_CLEAR;
-        EPwm3Regs.AQCTLA.bit.CAD = AQ_SET;
-
-        EPwm2Regs.AQCTLA.bit.CAU = AQ_CLEAR;
-        EPwm2Regs.AQCTLA.bit.CAD = AQ_SET;
-
-        EPwm4Regs.AQCTLA.bit.CAU = AQ_CLEAR;
-        EPwm4Regs.AQCTLA.bit.CAD = AQ_SET;
-
-        EPwm1Regs.CMPA.bit.CMPA = 0;
-        EPwm1Regs.CMPB.bit.CMPB = 0;
-
-        EPwm3Regs.CMPA.bit.CMPA = 0;
-        EPwm3Regs.CMPB.bit.CMPB = 0;
-
-        EPwm2Regs.CMPA.bit.CMPA = 0;
-        EPwm2Regs.CMPB.bit.CMPB = 0;
-
-        EPwm4Regs.CMPA.bit.CMPA = 0;
-        EPwm4Regs.CMPB.bit.CMPB = 0;
     }
 #endif
 #if(SET_MODE_RUN == SINGLE_PHASE_MODE)
@@ -1431,8 +1393,8 @@ __interrupt void Cla1Task8 ( void )
         rg_har_1st.StepAngleMax = 150.0f*0.00002f;
 
         RC_INT_MACRO(rc_Ref)
-        rc_Ref.StepRampDec = 0.0005f/1.0f/400.0f;
-        rc_Ref.StepRampInc = 0.0005f/1.0f/400.0f;
+        rc_Ref.StepRampDec = 0.0005f/10.0f/400.0f;
+        rc_Ref.StepRampInc = 0.0005f/10.0f/400.0f;
 
     #endif
 

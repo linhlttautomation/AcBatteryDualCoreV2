@@ -39,33 +39,33 @@ typedef BANDSTOP_FILTER *BANDSTOP_FILTER_hanlde;
 
 
 #define BANDSTOP_FILTER_INT(v)				\
-	v.a0 = 0.0f;								\
-	v.a1 = 0.0f;								\
-	v.a2 = 0.0f;								\
-	v.b0 = 0.0f;								\
-	v.b1 = 0.0f;								\
-	v.b2 = 0.0f;								\
-	v.a1a0 = 0.0f;								\
-	v.a2a0 = 0.0f;								\
-	v.b0a0 = 0.0f;								\
-	v.b1a0 = 0.0f;								\
-	v.b2a0 = 0.0f;								\
-	v.w0 = 0.0f;								\
-	v.wc = 0.0f;								\
-	v.In_k = 0.0f;								\
-	v.In_k_1 = 0.0f;							\
-	v.In_k_2 = 0.0f;							\
-	v.Out_k = 0.0f;							\
-	v.Out_k_1 = 0.0f;							\
-	v.Out_k_2 = 0.0f;
+	v.a0 = 0;								\
+	v.a1 = 0;								\
+	v.a2 = 0;								\
+	v.b0 = 0;								\
+	v.b1 = 0;								\
+	v.b2 = 0;								\
+	v.a1a0 = 0;								\
+	v.a2a0 = 0;								\
+	v.b0a0 = 0;								\
+	v.b1a0 = 0;								\
+	v.b2a0 = 0;								\
+	v.w0 = 0;								\
+	v.wc = 0;								\
+	v.In_k = 0;								\
+	v.In_k_1 = 0;							\
+	v.In_k_2 = 0;							\
+	v.Out_k = 0;							\
+	v.Out_k_1 = 0;							\
+	v.Out_k_2 = 0;
 
 #define BANDSTOP_FILTER_PARA(v)					\
-v.b0 = 1.0f + v.w0*v.w0*v.Ts*v.Ts;					\
-v.b1 = -2.0f;									\
-v.b2 = 1.0f;										\
-v.a0 = 1.0f + v.Ts*v.wc + v.Ts*v.Ts*v.w0*v.w0;		\
-v.a1 = -2.0f - v.Ts*v.wc;							\
-v.a2 = 1.0f;										\
+v.b0 = 1 + v.w0*v.w0*v.Ts*v.Ts;					\
+v.b1 = -2.0;									\
+v.b2 = 1.0;										\
+v.a0 = 1 + v.Ts*v.wc + v.Ts*v.Ts*v.w0*v.w0;		\
+v.a1 = -2 - v.Ts*v.wc;							\
+v.a2 = 1.0;										\
 v.a1a0 = v.a1/v.a0;								\
 v.a2a0 = v.a2/v.a0;								\
 v.b0a0 = v.b0/v.a0;								\

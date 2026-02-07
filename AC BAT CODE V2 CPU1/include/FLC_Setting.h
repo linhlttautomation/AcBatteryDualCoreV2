@@ -19,14 +19,14 @@
 #define LEVEL8        8           // Vong ap noi luoi 3P4N
 
 // ---------------------------------------------------
-#define BUILDLEVEL    LEVEL1
+#define BUILDLEVEL    LEVEL6
 // ---------------------------------------------------
 
 #define SINGLE_PHASE_MODE       1
 #define THREE_PHASE_MODE        3
 
 // ---------------------------------------------------
-#define SET_MODE_RUN          THREE_PHASE_MODE
+#define SET_MODE_RUN          SINGLE_PHASE_MODE
 // ---------------------------------------------------
 
 #define NONE                               0
@@ -55,12 +55,11 @@ extern volatile eReadMode eSET_MODE_READ;
 
 #define ALLOW_IPC_CPU               0
 #define ALLOW_CALIB_PI              0
-#define ALLOW_TIMER                 0
+#define ALLOW_TIMER                 1
 #define ALLLOW_DAC                  0
-#define ALLOW_EPWM_INT              0
-#define ALLOW_ADC_INT               0
+#define ALLOW_EPWM_INT              1
+#define ALLOW_ADC_INT               1
 #define ALLOW_FLC_AUTO_START_UP     0
-#define ALLOW_SINCOS_TABLE          0
 
 // ---------------------------------------------------
 #define MODE_MODULATION_SVM2D           2
@@ -76,15 +75,10 @@ extern volatile eReadMode eSET_MODE_READ;
     #define VAC_LOAD_64_FLC_30             30
     #define VAC_LOAD_64_FLC_60             60
     #define VAC_LOAD_64_FLC_100            100
-    #define VAC_LOAD_64_FLC_103            103
+    #define VAC_LOAD_64_FLC_130            130
 
-    //#define VAC_LOAD_64_FLC_100            100
-    //#define VAC_LOAD_144_FLC_400           130
-    //#define VAC_LOAD_144_FLC_500           180
-    //#define VAC_LOAD_144_FLC_550           200
-    //#define VAC_LOAD_144_FLC_600           220
 // ---------------------------------------------------
-#define SET_MODE_CONTROL                   VAC_LOAD_64_FLC_103
+#define SET_MODE_CONTROL                   VAC_LOAD_64_FLC_130
 // ---------------------------------------------------
 
 #endif
@@ -108,7 +102,6 @@ extern volatile eReadMode eSET_MODE_READ;
 
 // Define constant math
 #define PI 3.14159265358979f
-#define TWO_PI 6.28318530717959f
 #define can2 1.414213562f
 #define can3 1.732050808f
 #define can6 2.449489743f
@@ -116,7 +109,6 @@ extern volatile eReadMode eSET_MODE_READ;
 // Define read ADC FLC
 #define UDC_HCPL        AdcbResultRegs.ADCRESULT1 //B1
 
-#define VC_HCPL         AdcaResultRegs.ADCRESULT2
 #define VaG_HCPL        AdcdResultRegs.ADCRESULT2 //D2
 #define VbG_HCPL        AdcdResultRegs.ADCRESULT4 //D4
 
@@ -144,47 +136,22 @@ extern volatile eReadMode eSET_MODE_READ;
 
 #if(BUILDLEVEL == LEVEL4)
 
-    #if(SET_MODE_CONTROL == VAC_LOAD_32_FLC_30 && ALLOW_CALIB_PI == 0) //ok
+    #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_30 && ALLOW_CALIB_PI == 0) //ok
         #define KP_CURR_LOOP_1            1.0f/2
         #define KI_CURR_LOOP_1            200.0f*2
     #endif
 
-    #if(SET_MODE_CONTROL == VAC_LOAD_32_FLC_60 && ALLOW_CALIB_PI == 0) //ok
+    #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_60 && ALLOW_CALIB_PI == 0) //ok
         #define KP_CURR_LOOP_1            1.0f/2
         #define KI_CURR_LOOP_1            200.0f*2
     #endif
 
-    #if(SET_MODE_CONTROL == VAC_LOAD_32_FLC_100 && ALLOW_CALIB_PI == 0) //ok
+    #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_100 && ALLOW_CALIB_PI == 0) //ok
         #define KP_CURR_LOOP_1            1.0f/2
         #define KI_CURR_LOOP_1            200.0f*2
     #endif
 
-    #if(SET_MODE_CONTROL == VAC_LOAD_32_FLC_103 && ALLOW_CALIB_PI == 0) //ok
-        #define KP_CURR_LOOP_1            1.0f/2
-        #define KI_CURR_LOOP_1            200.0f*2
-    #endif
-
-    #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_103 && ALLOW_CALIB_PI == 0) //ok
-        #define KP_CURR_LOOP_1            1.0f/2
-        #define KI_CURR_LOOP_1            200.0f*2
-    #endif
-
-    #if(SET_MODE_CONTROL == VAC_LOAD_144_FLC_400 && ALLOW_CALIB_PI == 0)
-        #define KP_CURR_LOOP_1            1.0f/2
-        #define KI_CURR_LOOP_1            200.0f*2
-    #endif
-
-    #if(SET_MODE_CONTROL == VAC_LOAD_144_FLC_500 && ALLOW_CALIB_PI == 0)
-        #define KP_CURR_LOOP_1            1.0f/2
-        #define KI_CURR_LOOP_1            200.0f*2
-    #endif
-
-    #if(SET_MODE_CONTROL == VAC_LOAD_144_FLC_550 && ALLOW_CALIB_PI == 0)
-        #define KP_CURR_LOOP_1            1.0f/2
-        #define KI_CURR_LOOP_1            200.0f*2
-    #endif
-
-    #if(SET_MODE_CONTROL == VAC_LOAD_144_FLC_600 && ALLOW_CALIB_PI == 0)
+    #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_130 && ALLOW_CALIB_PI == 0) //ok
         #define KP_CURR_LOOP_1            1.0f/2
         #define KI_CURR_LOOP_1            200.0f*2
     #endif
@@ -192,9 +159,10 @@ extern volatile eReadMode eSET_MODE_READ;
     #define KP_VOLT_US_LOOP           0.00001f
     #define KI_VOLT_US_LOOP           0.1f
 
-    #define STEP_RAMP_VAC             0.0005f/1.0f
+    #define STEP_RAMP_VAC             0.0005f/10.0f
 
 #endif
+
 #if (BUILDLEVEL == LEVEL7)
 
     //#define KP_CURR_LOOP            1.15       // L filter 1.7mH: 17.0   --- L Filter 115uH: 1.15
@@ -237,8 +205,8 @@ extern volatile eReadMode eSET_MODE_READ;
 #define Wmax            (2.0f*PI*BASE_FREQ)
 
 //SW FLC Permission
-#define SW_PROTECT_UDC_UPPER            0
-#define SW_PROTECT_UDC_UNDER            0
+#define SW_PROTECT_UDC_UPPER            1
+#define SW_PROTECT_UDC_UNDER            1
 
 // CMPSS FLC Permission
 #define CMPSS_PROTECT_UDC_UPPER         0

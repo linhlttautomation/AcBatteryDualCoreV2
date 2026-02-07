@@ -6,6 +6,7 @@ SHELL = cmd.exe
 
 # Add inputs and outputs from these tool invocations to the build variables 
 LIB_SRCS += \
+../library/Math/IQmath/lib/IQmath_eabi.lib \
 ../library/Math/IQmath/lib/IQmath_fpu32_eabi.lib 
 
 

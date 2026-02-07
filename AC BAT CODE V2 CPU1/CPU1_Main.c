@@ -15,7 +15,6 @@
 #include <sdfm_ex1_filter_cla_sync_shared_cpu1.h>
 #include "f2838x_sdfm_drivers.h"
 #include "f2838x_struct.h"
-#include <string.h>
 
 //
 // Defines
@@ -85,14 +84,13 @@ PROTECT_CHANEL protect_chanel;
 
 Uint16 wd_count = 0;
 
-Uint16 ClrPrtFlg = 1;
+Uint16 ClrPrtFlg = 0;
 
 Uint16 ClrPrtFLg_Fst = 0;
 
 Uint16 RunTask8Flag = 0;
 
-#pragma DATA_SECTION(FLC_RstFlg,"RAMGS0");
-volatile Uint16 FLC_RstFlg = 1;
+Uint16 FLC_RstFlg = 0;
 
 Uint16 Epwm1 = 0;
 Uint16 AdcB0 = 0;
@@ -100,7 +98,7 @@ Uint16 count_FLC_start_up = 0;
 int16 dac_val = 0;
 
 volatile float Adc_Udc_Voltage = 0;
-volatile float AdcValue_Vc = 0;
+
 // ---------------------------------------------------
 
 volatile float SW_Udc_Upper_Protection = 450.0f;
@@ -202,29 +200,6 @@ void InitCpuTimer1(void)
     CpuTimer1Regs.TCR.bit.TSS = 0;           // Start timer
 }
 
-void Action(void)
-{
-    static Uint16 initialized = 1;
-    static Uint16 prevState;
-    static Uint16 flcState = 0;
-
-    Uint16 currState = GpioDataRegs.GPBDAT.bit.GPIO48;
-
-    if (!initialized)
-    {
-        prevState = currState;
-        initialized = 1;
-    }
-
-    if (prevState == 1 && currState == 0)
-    {
-        flcState = !flcState;
-        e_FLC_Sts = (flcState) ? FLC_ON : FLC_OFF;
-    }
-
-    prevState = currState;
-}
-
 __interrupt void Cpu_Timer0_ISR(void)
 {
     if(e_FLC_Sts == FLC_ON)
@@ -243,12 +218,6 @@ void SWUdcProtection(void)
         Adc_Udc_Voltage = 1.15f*800.0f*(UDC_HCPL - 2.0f)/(4096.0f - 2.0f);
     }
     else Adc_Udc_Voltage = 0.0;
-
-//    if(VC_HCPL > 1.0)
-//    {
-//        AdcValue_Vc = 1.085f*600.0f*(VC_HCPL + 18.0f)/(4096.0f - 1.0f);
-//    }
-//    else AdcValue_Vc = 0.0;
 
     #if(SW_PROTECT_UDC_UPPER)
         // Udc Upper Protection
@@ -275,6 +244,7 @@ void SWUdcProtection(void)
             protect_chanel.Udc_under = 0;
         }
     #endif
+
 }
 
 __interrupt void Cpu_Timer1_ISR(void)
@@ -469,19 +439,21 @@ void Init_ADC_D()
 void CMPSS_Protection_FLC(void)
 {
     EALLOW;
-    // Cmpss Protect for TPC
-        EPwmXbarRegs.TRIP4MUX0TO15CFG.all  = 0x0000;
-        EPwmXbarRegs.TRIP4MUX16TO31CFG.all = 0x0000;
-        EPwmXbarRegs.TRIP4MUX0TO15CFG.bit.MUX0  = 0;
-        EPwmXbarRegs.TRIP4MUX0TO15CFG.bit.MUX2  = 0;
-        EPwmXbarRegs.TRIP4MUX0TO15CFG.bit.MUX6  = 0;
-    //    EPwmXbarRegs.TRIP5MUX0TO15CFG.bit.MUX6  = 0;
 
-        EPwmXbarRegs.TRIP4MUXENABLE.all = 0x0000;
-        EPwmXbarRegs.TRIP4MUXENABLE.bit.MUX0  = 1;
-        EPwmXbarRegs.TRIP4MUXENABLE.bit.MUX2  = 1;
-        EPwmXbarRegs.TRIP4MUXENABLE.bit.MUX6  = 1;
-    //    EPwmXbarRegs.TRIP5MUXENABLE.bit.MUX6  = 1;
+    // Cmpss Protect for TPC
+    EPwmXbarRegs.TRIP4MUX0TO15CFG.all  = 0x0000;
+    EPwmXbarRegs.TRIP4MUX16TO31CFG.all = 0x0000;
+    EPwmXbarRegs.TRIP4MUX0TO15CFG.bit.MUX0  = 0;
+    EPwmXbarRegs.TRIP4MUX0TO15CFG.bit.MUX2  = 0;
+    EPwmXbarRegs.TRIP4MUX0TO15CFG.bit.MUX6  = 0;
+//    EPwmXbarRegs.TRIP5MUX0TO15CFG.bit.MUX6  = 0;
+
+    EPwmXbarRegs.TRIP4MUXENABLE.all = 0x0000;
+    EPwmXbarRegs.TRIP4MUXENABLE.bit.MUX0  = 1;
+    EPwmXbarRegs.TRIP4MUXENABLE.bit.MUX2  = 1;
+    EPwmXbarRegs.TRIP4MUXENABLE.bit.MUX6  = 1;
+//    EPwmXbarRegs.TRIP5MUXENABLE.bit.MUX6  = 1;
+
     //-----------------------------------------------------
     #if(CMPSS_PROTECT_VaG_UPPER == 1)
         Cmpss8Regs.COMPCTL.bit.COMPDACE = 1;
@@ -742,18 +714,9 @@ void UpdateProtectValue(void)
     EDIS;
 }
 
-//void Boot_CPU2_FromFlash(void)
-//{
-//    EALLOW;
-//    DevCfgRegs.CPU2RESCTL.bit.RESET = 1;
-//
-//    DevCfgRegs.CPU2RESCTL.bit.RESET = 0;
-//    EDIS;
-//}
-
 //
 // Main
-// linh ta
+//
 int main(void)
 {
     Uint16  pinMuxoption;
@@ -775,15 +738,7 @@ int main(void)
     // PLL, WatchDog, enable Peripheral Clocks
     // This example function is found in the f2838x_sysctrl.c file.
     //
-
-//    SetAllEPwmPinsAsInput();
-
     InitSysCtrl();
-
-//    memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (size_t)&RamfuncsLoadSize);
-//    InitFlash();
-//
-//    Boot_CPU2_FromFlash();
 
     for(ndx1=0; ndx1<DLOG_SIZE_1; ndx1++)
     {
@@ -861,7 +816,6 @@ int main(void)
 
    EALLOW;
 
-
    //  GPIO-00 - PIN FUNCTION = PWM1A
        GpioCtrlRegs.GPAGMUX1.bit.GPIO0 = 0;
        GpioCtrlRegs.GPAMUX1.bit.GPIO0 = 1;
@@ -910,11 +864,11 @@ int main(void)
        GpioCtrlRegs.GPADIR.bit.GPIO7 = 1;
        GpioCtrlRegs.GPAPUD.bit.GPIO7 = 0;
 
-   //  GPIO-10 - PIN FUNCTION = GPIO10
-       GpioCtrlRegs.GPAMUX1.bit.GPIO10 = 0;
-       GpioCtrlRegs.GPADIR.bit.GPIO10 = 0;
+   //  GPIO-10 - PIN FUNCTION = PWM6A
+       GpioCtrlRegs.GPAGMUX1.bit.GPIO10 = 0;
+       GpioCtrlRegs.GPAMUX1.bit.GPIO10 = 1;
+       GpioCtrlRegs.GPADIR.bit.GPIO10 = 1;
        GpioCtrlRegs.GPAPUD.bit.GPIO10 = 0;
-       GpioCtrlRegs.GPACSEL2.bit.GPIO10 = 2;
 
    //  GPIO-11 - PIN FUNCTION = PWM6B
        GpioCtrlRegs.GPAGMUX1.bit.GPIO11 = 0;
@@ -1054,22 +1008,22 @@ int main(void)
        EPwm6Regs.TBCTL.bit.CTRMODE = TB_COUNT_UPDOWN;
 
        /* Initialization */
-       EPwm1Regs.CMPA.bit.CMPA = 0;
+       EPwm1Regs.CMPA.bit.CMPA = period;
        EPwm1Regs.TBPHS.bit.TBPHS = 0;
        EPwm1Regs.TBCTR = 0;
        EPwm1Regs.TBPRD = period;
 
-       EPwm3Regs.CMPA.bit.CMPA = 0;
+       EPwm3Regs.CMPA.bit.CMPA = period;
        EPwm3Regs.TBPHS.bit.TBPHS = 0;
        EPwm3Regs.TBCTR = 0;
        EPwm3Regs.TBPRD = period;
 
-       EPwm2Regs.CMPA.bit.CMPA = 0;
+       EPwm2Regs.CMPA.bit.CMPA = period;
        EPwm2Regs.TBPHS.bit.TBPHS = 0;
        EPwm2Regs.TBCTR = 0;
        EPwm2Regs.TBPRD = period;
 
-       EPwm4Regs.CMPA.bit.CMPA = 0;
+       EPwm4Regs.CMPA.bit.CMPA = period;
        EPwm4Regs.TBPHS.bit.TBPHS = 0;
        EPwm4Regs.TBCTR = 0;
        EPwm4Regs.TBPRD = period;
@@ -1331,7 +1285,7 @@ int main(void)
     //
     IER |= M_INT11;
 
-    #if(ALLOW_TIMER == 1)
+    #if(ALLOW_TIMER0 == 1)
         EALLOW;
         PieVectTable.TIMER0_INT = &Cpu_Timer0_ISR;  // ISR for Timer0
         EDIS;
@@ -1353,7 +1307,7 @@ int main(void)
         EDIS;
     #endif
 
-    #if(ALLOW_TIMER == 1)
+    #if(ALLOW_TIMER0 == 1)
         PieCtrlRegs.PIEIER1.bit.INTx7 = 1;  // Timer0 interrupt = Group 1, INT7
         IER |= M_INT1;                      // Enable group 1 interrupt
         EINT;                               // Enable global interrupt
@@ -1367,6 +1321,13 @@ int main(void)
         EALLOW;
         IER |= M_INT3;
         PieCtrlRegs.PIEIER3.bit.INTx1 = 1;
+        EDIS;
+    #endif
+
+    #if(ALLOW_EPWM_INT == 1)
+        EALLOW;
+        IER |= M_INT1;
+        PieCtrlRegs.PIEIER1.bit.INTx2 = 1;
         EDIS;
     #endif
 
@@ -1528,8 +1489,8 @@ int main(void)
             CpuToCLA.VdTesting = VAC_LOAD_64_FLC_100;
         #endif
 
-        #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_103)
-            CpuToCLA.VdTesting = VAC_LOAD_64_FLC_103;
+        #if(SET_MODE_CONTROL == VAC_LOAD_64_FLC_130)
+            CpuToCLA.VdTesting = VAC_LOAD_64_FLC_130;
         #endif
 
     #endif
@@ -1551,8 +1512,6 @@ int main(void)
     CpuToCLA.ADCgain_Ia_inv = 1.55f;
     CpuToCLA.ADCgain_Ib_inv = 1.5f;
     CpuToCLA.ADCgain_Ic_inv = 1.53f;
-
-    FLC_RstFlg = 1;
 
     DelayMs(100);
 
@@ -1577,8 +1536,6 @@ int main(void)
                 count_FLC_start_up = 0;
             }
         #endif
-
-        Action();
 
         if(e_FLC_Sts == FLC_ON)
         {

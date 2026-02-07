@@ -14,13 +14,13 @@
 #define LEVEL3          3           // vong kin discharge DAB
 #define LEVEL5          5           // Vong kin discharge CFDAB
 
-#define BUILDLEVEL      LEVEL1
+#define BUILDLEVEL      LEVEL5
 
 // Define Mode_Run
 #define CFDAB_MODE      1
 #define VFDAB_MODE      2
 
-#define TPC_MODE_RUN    VFDAB_MODE
+#define TPC_MODE_RUN    CFDAB_MODE
 
 
 #define     NOT_ALLOW_SWITCH_BDK      0

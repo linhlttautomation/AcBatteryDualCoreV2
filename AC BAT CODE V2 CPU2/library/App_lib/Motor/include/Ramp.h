@@ -26,26 +26,26 @@ if(v.rc_tmp_inc > v.StepRampInc)							\
 	if (v.TargetValue >= v.SetpointValue)					\
 	{														\
 		v.SetpointValue += v.StepRampInc;					\
-		if(v.SetpointValue > (1.0f))							\
-			v.SetpointValue = (1.0f);						\
+		if(v.SetpointValue > (1.0))							\
+			v.SetpointValue = (1.0);						\
 	}														\
 else v.EqualFlag = 0x7FFFFFFF;								\
 if(v.rc_tmp_dec > v.StepRampDec)							\
 	if (v.TargetValue <= v.SetpointValue)					\
 	{														\
 		v.SetpointValue -= v.StepRampDec;					\
-		if(v.SetpointValue < (-1.0f))						\
-			v.SetpointValue =(-1.0f);						\
+		if(v.SetpointValue < (-1.0))						\
+			v.SetpointValue =(-1.0);						\
 	}														\
 else v.EqualFlag = 0x7FFFFFFF;
 
 #define RC_INT_MACRO(v)				    \
-v.TargetValue = 0.0f;						\
-v.StepRampInc = 0.0f;						\
-v.StepRampDec = 0.0f;						\
-v.SetpointValue = 0.0f;					\
-v.EqualFlag  = 0.0f;						\
-v.rc_tmp_inc = 0.0f;						\
-v.rc_tmp_dec = 0.0f;
+v.TargetValue = 0;						\
+v.StepRampInc = 0;						\
+v.StepRampDec = 0;						\
+v.SetpointValue = 0;					\
+v.EqualFlag  = 0;						\
+v.rc_tmp_inc = 0;						\
+v.rc_tmp_dec = 0;
 
 #endif /* RAMP_H_ */

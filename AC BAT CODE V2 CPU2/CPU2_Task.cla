@@ -281,8 +281,6 @@ volatile short switch_bdk;
 #pragma DATA_SECTION(switch_timectl,"CLADataLS0");
 volatile short switch_timectl;
 
-#pragma DATA_SECTION(Cnt_switch_timectl,"CLADataLS0");
-volatile long Cnt_switch_timectl;
 #endif
 #if(TPC_MODE_RUN == VFDAB_MODE)
 
@@ -894,18 +892,7 @@ TaskCpu2Cla1++;
                         else cntl_2p2z_var_Vc.Fdbk = filterBand_Vc.Out_k;
 
                             CNTL_2P2Z_CLA_MACRO(cntl_2p2z_coeff_Vc,cntl_2p2z_var_Vc);
-//Cnt_switch_timecontrol
-                        if(Enable_duty == 1)
-                        {
-                            Cnt_switch_timectl++;
-                            if((Cnt_switch_timectl - 250000) > 0)  Cnt_switch_timectl = 250000;
-                            if(Cnt_switch_timectl == 250000)
-                            {
-                                switch_timectl = 1;
-                            }
 
-                         }
-//
                         if(Enable_phi == 0)
                         {
 //                             if((rc_VcRef.TargetValue - rc_VcRef.SetpointValue )  < (7.1/600.0))
@@ -1105,7 +1092,6 @@ TaskCpu2Cla1++;
         Enable_duty = 0;
         Enable_phi = 0;
         Enable_filter = 0;
-        Cnt_switch_timectl = 0;
     }
 #endif
 #if(TPC_MODE_RUN == VFDAB_MODE)
@@ -1743,7 +1729,6 @@ __interrupt void Cla1Task8 ( void )
     Switch_control = 0;
     switch_bdk = 0;
     switch_timectl = 0;
-    Cnt_switch_timectl = 0;
 
     Cmpa_Q1 = 0;
     Cmpa_Q2 = 0;
